@@ -1,0 +1,33 @@
+#loading {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    margin-left: -45px;
+    padding: 0px;
+    z-index: -30000;
+    height: auto;
+    border: none;
+}
+
+#loading a {
+    /*color: #225588;*/
+}
+
+#loading .loading-indicator {
+    background: none;
+    /*color: #444;*/
+    font: bold 13px tahoma, arial, helvetica;
+    padding: 10px;
+    margin: 0;
+    height: auto;
+}
+
+#loading .loading-indicator img {
+    margin-right: 8px;
+    float: left;
+    vertical-align: top;
+}
+
+#loading-msg {
+    font: normal 10px arial, tahoma, sans-serif;
+}

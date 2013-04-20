@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<dataset>
+
+    <tCity id="1" name="Днепропетровск" region="Днепропетровская" country="Украина" zipCode="5402"/>
+    <tCity id="2" name="Киев" region="Киевская" country="Украина" zipCode="49000"/>
+
+</dataset>

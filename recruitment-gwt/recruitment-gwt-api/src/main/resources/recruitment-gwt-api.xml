@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-3.0.xsd
+		http://www.springframework.org/schema/aop
+   		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<context:annotation-config />
+
+	<context:component-scan base-package="com.versatile.recruitment.gwt.api.server" />
+
+	<bean name="defaultActionValidator"
+		class="com.gwtplatform.dispatch.server.spring.actionvalidator.DefaultActionValidator" />
+	<bean name="defaultRequestProvider"
+		class="com.gwtplatform.dispatch.server.spring.request.DefaultRequestProvider" />
+	<bean name="actionHandlerRegistry"
+		class="com.versatile.recruitment.gwt.api.server.dispatch.AutowiredEagerActionHandlerRegistry"/>
+
+	<bean name="dispatcher" class="com.gwtplatform.dispatch.server.spring.DispatchImpl" />
+
+	<bean id="logger"
+		class="com.gwtplatform.dispatch.server.spring.LoggerFactoryBean">
+		<constructor-arg>
+			<bean class="java.util.logging.Logger" factory-method="getAnonymousLogger">
+				<property name="level" value="FINEST" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean name="dispatch"
+		class="com.gwtplatform.dispatch.server.spring.DispatchServiceImpl" />
+
+</beans>
