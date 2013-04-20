@@ -1,6 +1,6 @@
 package com.versatile.recruitment.persistence.impl.dao;
 
-import com.versatile.recruitment.persistence.api.dao.IGenericDelegateableDao;
+import com.versatile.recruitment.persistence.api.dao.IGenericDao;
 import com.versatile.recruitment.persistence.api.dao.ISqlTransactionCallback;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -8,6 +8,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -34,32 +34,33 @@ import java.util.Set;
  * @author Sergey Netesanyi
  * @version 1.0
  */
-@Repository
-public class HibernateDelegateableDao implements IGenericDelegateableDao {
+public abstract class SpringHibernateDao<PK extends Serializable, T> implements IGenericDao<PK, T> {
     /** Spring hibernate template name for working with database, */
     private static final String HIBERNATE_TEMPLATE = "hibernateTemplate";
     /** Logger instance */
-    private static final Logger LOG = Logger.getLogger(HibernateDelegateableDao.class);
+    private static final Logger LOG = Logger.getLogger(SpringHibernateDao.class);
 
     /** Hibernate helper for working with database */
     @Autowired
     @Qualifier(HIBERNATE_TEMPLATE)
-    private HibernateTemplate hibernateTemplate;
+    protected HibernateTemplate hibernateTemplate;
 
     /** {@inheritDoc} */
     @Override
-    public <T> List<T> findAll(Class<T> entityClass) {
-        List<T> results = hibernateTemplate.loadAll(entityClass);
+    public List<T> findAll() {
+        List<T> results = hibernateTemplate.loadAll(getEntityClass());
         Set<T> set = new HashSet<T>(results);
         results = new ArrayList<T>(set);
         return results;
 
     }
 
+    protected abstract Class<T> getEntityClass();
+
     /** {@inheritDoc} */
     @Override
-    public <T, PK extends Serializable> T findById(Class<T> entityClass, PK id) {
-        T o = hibernateTemplate.get(entityClass, id);
+    public T findById(PK id) {
+        T o = hibernateTemplate.get(getEntityClass(), id);
         if (o == null) {
             LOG.warn("Entity with id '" + id + "' was not found...");
 //            throw new ObjectRetrievalFailureException(entityClass, id);
@@ -69,14 +70,13 @@ public class HibernateDelegateableDao implements IGenericDelegateableDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> List<T> findByNamedQueryAndNamedParam(Class<T> entityClass,
-                                                     String queryName, String[] paramNames, Object[] values) {
+    public <T> List<T> findByNamedQueryAndNamedParam(String queryName, String[] paramNames, Object[] values) {
         return hibernateTemplate
                 .findByNamedQueryAndNamedParam(queryName, paramNames, values);
     }
 
     @Override
-    public <T> List<T> findByNamedQueryAndNamedParam(Class<T> entityClass, String queryName,
+    public <T> List<T> findByNamedQueryAndNamedParam(String queryName,
                                                      Map<String, ?> params) {
         String[] paramNames = new String[params.size()];
         Object[] values = new Object[params.size()];
@@ -88,21 +88,21 @@ public class HibernateDelegateableDao implements IGenericDelegateableDao {
             values[i] = params.get(key);
         }
 
-        return this.findByNamedQueryAndNamedParam(entityClass, queryName, paramNames, values);
+        return this.findByNamedQueryAndNamedParam(queryName, paramNames, values);
 
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> List<T> findByNamedParam(Class<T> entityClass, String query,
-                                        String[] paramNames, Object[] values) {
+    public List<T> findByNamedParam(String query,
+                                    String[] paramNames, Object[] values) {
 
         return hibernateTemplate.findByNamedParam(query, paramNames, values);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> List<T> findByNamedParam(Class<T> entityClass, String query, Map<String, ?> params)
+    public <T> List<T> findByNamedParam(String query, Map<String, ?> params)
             throws DataAccessException {
         Query q = hibernateTemplate.getSessionFactory().openSession().getNamedQuery(query);
         if (params != null) {
@@ -117,32 +117,34 @@ public class HibernateDelegateableDao implements IGenericDelegateableDao {
     @SuppressWarnings("unchecked")
     @Override
     @Transactional
-    public <T, PK> PK save(T data) {
+    public PK save(T data) {
         return (PK) hibernateTemplate.save(data);
     }
 
     @Transactional
     @Override
-    public <T> void save(Collection<T> data) {
+    public void save(Collection<T> data) {
         hibernateTemplate.saveOrUpdateAll(data);
     }
 
     @Transactional
     @Override
-    public <T> void saveOrUpdate(T entity) {
+    public void saveOrUpdate(T entity) {
         hibernateTemplate.saveOrUpdate(entity);
     }
 
     @Override
-    public <T> int countAll(Class<T> entityClass) {
-
-        return this.findAll(entityClass).size();
+    public int countAll() {
+        Session session = hibernateTemplate.getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(getEntityClass());
+        criteria.setProjection(Projections.rowCount());
+        return ((Number) criteria.list().get(0)).intValue();
     }
 
     @Override
-    public <T> int countByExample(Class<T> entityClass, T exampleInstance) {
+    public int countByExample(T exampleInstance) {
         Session session = hibernateTemplate.getSessionFactory().openSession();
-        Criteria crit = session.createCriteria(entityClass);
+        Criteria crit = session.createCriteria(getEntityClass());
         crit.setProjection(Projections.rowCount());
         crit.add(Example.create(exampleInstance));
 
@@ -151,9 +153,10 @@ public class HibernateDelegateableDao implements IGenericDelegateableDao {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> getPage(Class<T> entityClass, int start, int end) {
+    @Override
+    public List<T> findPage(int start, int end) {
         Session session = hibernateTemplate.getSessionFactory().openSession();
-        Criteria criteria = session.createCriteria(entityClass);
+        Criteria criteria = session.createCriteria(getEntityClass());
         criteria.setFirstResult(start);
         criteria.setMaxResults(end);
 
@@ -163,23 +166,23 @@ public class HibernateDelegateableDao implements IGenericDelegateableDao {
 
     @Transactional
     @Override
-    public <T> void delete(T entity) {
+    public void delete(T entity) {
         hibernateTemplate.delete(entity);
     }
 
     @Override
-    public <T> void deleteAll(Class<T> entityClass) {
-        hibernateTemplate.deleteAll(this.findAll(entityClass));
+    public void deleteAll() {
+        hibernateTemplate.deleteAll(this.findAll());
     }
 
     @Transactional
     @Override
-    public <T> T merge(T entity) {
+    public T merge(T entity) {
         return hibernateTemplate.merge(entity);
     }
 
     @Override
-    public <T> T doInSqlTransaction(final ISqlTransactionCallback<T> callback) {
+    public T doInSqlTransaction(final ISqlTransactionCallback<T> callback) {
         return getHibernateTemplate().execute(new HibernateCallback<T>() {
             @Override
             public T doInHibernate(Session session) throws HibernateException, SQLException {
@@ -196,4 +199,23 @@ public class HibernateDelegateableDao implements IGenericDelegateableDao {
         return hibernateTemplate;
     }
 
+    /**
+     * Gets search criteria which can be used for searches with criteria.
+     *
+     * @return detached criteria.
+     */
+    protected DetachedCriteria getDetachedCriteria() {
+        return DetachedCriteria.forClass(getEntityClass());
+    }
+
+    /**
+     * Gets search criteria which can be used for searches with criteria.
+     *
+     * @param alias
+     *         Root alias.
+     * @return detached criteria.
+     */
+    protected DetachedCriteria getDetachedCriteria(String alias) {
+        return DetachedCriteria.forClass(getEntityClass());
+    }
 }
