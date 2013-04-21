@@ -7,3 +7,6 @@
 *.idea
 *.impl
 *.iws
+*.iml
+*.bak
+*.swp
