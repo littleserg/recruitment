@@ -160,7 +160,7 @@
                 <executions>
                     <execution>
                         <goals>
-                            <!--<goal>compile</goal>-->
+                            <goal>compile</goal>
                             <!--<goal>i18n</goal>-->
                         </goals>
                     </execution>
@@ -169,7 +169,7 @@
                     <logLevel>INFO</logLevel>
                     <modules>
                         <module>
-                            com.versatile.recruitment.war.gwt.recruitment
+                            com.versatile.recruitment.war.gwt.Recruitment
                         </module>
                     </modules>
                     <runTarget>index.jsp</runTarget>

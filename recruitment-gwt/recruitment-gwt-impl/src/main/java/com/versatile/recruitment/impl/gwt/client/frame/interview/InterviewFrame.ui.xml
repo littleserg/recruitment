@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:interview="urn:import:com.versatile.recruitment.impl.gwt.client.frame.interview">
+
+    <ui:style>
+        .footer {
+            background: black;
+        }
+    </ui:style>
+
+    <g:DockLayoutPanel>
+        <g:center>
+            <interview:InterviewerGrid ui:field="grid"/>
+        </g:center>
+    </g:DockLayoutPanel>
+
+</ui:UiBinder>
