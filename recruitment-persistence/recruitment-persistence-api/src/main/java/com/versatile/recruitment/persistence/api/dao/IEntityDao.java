@@ -1,12 +1,13 @@
 package com.versatile.recruitment.persistence.api.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Sergey Netesanyi
  * @version 1.0
  */
-public interface IEntityDao<T> {
+public interface IEntityDao<PK extends Serializable, T> {
 
     /**
      * Find entity by id.
@@ -15,7 +16,7 @@ public interface IEntityDao<T> {
      *         entity identifier.
      * @return Loaded entity.
      */
-    T findById(Long id);
+    T findById(PK id);
 
     /**
      * Save new entity to database.
@@ -24,7 +25,7 @@ public interface IEntityDao<T> {
      *         entity for saving.
      * @return Identifier of the new entity.
      */
-    Long save(T entity);
+    PK save(T entity);
 
     /**
      * Save or update the entity.

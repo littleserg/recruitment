@@ -1,16 +1,28 @@
-package com.versatile.recruitment.persistence.impl.entity;
+package com.versatile.recruitment.persistence.api.entity;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-public class Event implements Serializable{
+@Entity
+@Inheritance(strategy= InheritanceType.JOINED)
+public abstract class Event implements Serializable {
     private static final long serialVersionUID = 7827414366436899404L;
 
+    @Id
+    @GeneratedValue
     private Long id;
-    private EventType type;
+    @Column
+    private char type;
+    @Column
     private Date dateFrom;
+    @Column
     private Date dateTo;
+    @ManyToMany (cascade=CascadeType.ALL)
+    @JoinTable(name = "person_event",
+            joinColumns = @JoinColumn(name = "eventId"),
+            inverseJoinColumns = @JoinColumn(name = "personId"))
     private Set<Person> participants;
 
     public Event() {
@@ -25,11 +37,11 @@ public class Event implements Serializable{
     }
 
     public EventType getType() {
-        return type;
+        return EventType.fromValue(type);
     }
 
     public void setType(EventType type) {
-        this.type = type;
+        this.type = type.toValue();
     }
 
     public Date getDateFrom() {
@@ -63,7 +75,8 @@ public class Event implements Serializable{
 
         Event event = (Event) o;
 
-        if (id != null ? !id.equals(event.id) : event.id != null) return false;
+        if (!dateFrom.equals(event.dateFrom)) return false;
+        if (!dateTo.equals(event.dateTo)) return false;
         if (type != event.type) return false;
 
         return true;
@@ -71,8 +84,9 @@ public class Event implements Serializable{
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
+        int result = type;
+        result = 31 * result + dateFrom.hashCode();
+        result = 31 * result + dateTo.hashCode();
         return result;
     }
 

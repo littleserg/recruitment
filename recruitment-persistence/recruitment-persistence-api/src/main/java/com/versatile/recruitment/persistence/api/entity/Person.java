@@ -1,18 +1,32 @@
-package com.versatile.recruitment.persistence.impl.entity;
+package com.versatile.recruitment.persistence.api.entity;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
-public class Person implements Serializable{
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Person implements Serializable, Identifiable {
 
     private static final long serialVersionUID = 700413145774220175L;
 
+    @Id
+    @GeneratedValue
     private Long id;
+    @Column
     private String firstName;
+    @Column
     private String lastName;
+    @Column
     private String internalPhone;
+    @Column
     private String mobilePhone;
+    @Column
     private String email;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "person_event",
+            joinColumns = @JoinColumn(name = "personId"),
+            inverseJoinColumns = @JoinColumn(name = "eventId"))
     private Set<Event> events;
 
     public Person() {
@@ -91,7 +105,7 @@ public class Person implements Serializable{
 
     @Override
     public int hashCode() {
-        int result = id.hashCode();
+        int result = 1;
         result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
         result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
