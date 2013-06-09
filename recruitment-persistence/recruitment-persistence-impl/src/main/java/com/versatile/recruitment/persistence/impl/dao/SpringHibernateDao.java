@@ -49,8 +49,6 @@ public abstract class SpringHibernateDao<PK extends Serializable, T> implements 
     @Override
     public List<T> findAll() {
         List<T> results = hibernateTemplate.loadAll(getEntityClass());
-        Set<T> set = new HashSet<T>(results);
-        results = new ArrayList<T>(set);
         return results;
 
     }

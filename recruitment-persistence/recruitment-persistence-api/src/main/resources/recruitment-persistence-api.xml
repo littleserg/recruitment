@@ -56,24 +56,24 @@
     </bean>
 
     <!--<tx:advice id="txAdviceDao" transaction-manager="txManager">-->
-        <!--<tx:attributes>-->
-            <!--<tx:method name="*" propagation="MANDATORY"/>-->
-            <!--<tx:method name="get*" propagation="SUPPORTS" read-only="true"/>-->
-            <!--<tx:method name="load*" propagation="SUPPORTS" read-only="true"/>-->
-            <!--<tx:method name="list*" propagation="SUPPORTS" read-only="true"/>-->
-            <!--<tx:method name="create*" propagation="SUPPORTS"/>-->
-            <!--<tx:method name="add*" propagation="SUPPORTS"/>-->
-            <!--<tx:method name="select*" propagation="SUPPORTS" read-only="true"/>-->
-            <!--<tx:method name="is*" propagation="SUPPORTS" read-only="true"/>-->
-            <!--<tx:method name="find*" propagation="SUPPORTS" read-only="true"/>-->
-            <!--<tx:method name="remove*" propagation="SUPPORTS" read-only="true"/>-->
-            <!--<tx:method name="insert*" propagation="SUPPORTS" read-only="true"/>-->
-        <!--</tx:attributes>-->
+    <!--<tx:attributes>-->
+    <!--<tx:method name="*" propagation="MANDATORY"/>-->
+    <!--<tx:method name="get*" propagation="SUPPORTS" read-only="true"/>-->
+    <!--<tx:method name="load*" propagation="SUPPORTS" read-only="true"/>-->
+    <!--<tx:method name="list*" propagation="SUPPORTS" read-only="true"/>-->
+    <!--<tx:method name="create*" propagation="SUPPORTS"/>-->
+    <!--<tx:method name="add*" propagation="SUPPORTS"/>-->
+    <!--<tx:method name="select*" propagation="SUPPORTS" read-only="true"/>-->
+    <!--<tx:method name="is*" propagation="SUPPORTS" read-only="true"/>-->
+    <!--<tx:method name="find*" propagation="SUPPORTS" read-only="true"/>-->
+    <!--<tx:method name="remove*" propagation="SUPPORTS" read-only="true"/>-->
+    <!--<tx:method name="insert*" propagation="SUPPORTS" read-only="true"/>-->
+    <!--</tx:attributes>-->
     <!--</tx:advice>-->
 
     <!--<tx:advice id="txAdviceService" transaction-manager="txManager">-->
-        <!--<tx:attributes>-->
-            <!--<tx:method name="*" propagation="REQUIRED"/>-->
-        <!--</tx:attributes>-->
+    <!--<tx:attributes>-->
+    <!--<tx:method name="*" propagation="REQUIRED"/>-->
+    <!--</tx:attributes>-->
     <!--</tx:advice>-->
 </beans>

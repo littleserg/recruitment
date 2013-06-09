@@ -11,33 +11,15 @@ import java.util.Map;
  * @author Sergey Netesanyi
  * @version 1.0
  */
-public interface IGenericDao<PK extends Serializable, T> {
+public interface IGenericDao<PK extends Serializable, T> extends IEntityDao<PK, T> {
 
-    /**
-     * Find all items of concrete entity
-     *
-     * @return List of loaded entities
-     */
-    List<T> findAll();
-
-    /**
-     * Find concrete item acccording to primary key
-     *
-     * @param id
-     *         Primary key
-     * @return Loaded entity
-     */
-    T findById(PK id);
 
     /**
      * Find entities by named query and named parameters
      *
-     * @param queryName
-     *         Query name
-     * @param paramNames
-     *         Array of parameter names
-     * @param values
-     *         Array of parameter values
+     * @param queryName  Query name
+     * @param paramNames Array of parameter names
+     * @param values     Array of parameter values
      * @return List of loaded items
      */
     <T> List<T> findByNamedQueryAndNamedParam(String queryName,
@@ -46,10 +28,8 @@ public interface IGenericDao<PK extends Serializable, T> {
     /**
      * Find entities by named query and named parameters
      *
-     * @param queryName
-     *         Query name
-     * @param params
-     *         Map of parameters names and it's values
+     * @param queryName Query name
+     * @param params    Map of parameters names and it's values
      * @return List of loaded items
      */
     <T> List<T> findByNamedQueryAndNamedParam(String queryName, Map<String, ?> params);
@@ -59,12 +39,9 @@ public interface IGenericDao<PK extends Serializable, T> {
     /**
      * Find entities by query and named parameters
      *
-     * @param query
-     *         Sql query
-     * @param paramNames
-     *         Array of parameter names
-     * @param values
-     *         Array of parameter values
+     * @param query      Sql query
+     * @param paramNames Array of parameter names
+     * @param values     Array of parameter values
      * @return List of loaded items
      */
     <T> List<T> findByNamedParam(String query,
@@ -73,10 +50,8 @@ public interface IGenericDao<PK extends Serializable, T> {
     /**
      * Find entities by query and named parameters
      *
-     * @param query
-     *         Sql query
-     * @param params
-     *         Map of parameters names and it's values
+     * @param query  Sql query
+     * @param params Map of parameters names and it's values
      * @return List of loaded items
      */
     <T> List<T> findByNamedParam(String query,
@@ -85,60 +60,29 @@ public interface IGenericDao<PK extends Serializable, T> {
     /**
      * Store object to database
      *
-     * @param data
-     *         Data for storing
-     * @return Primary kay of persisted entity.
-     */
-    PK save(final T data);
-
-    /**
-     * Store object to database
-     *
-     * @param data
-     *         Data for storing
+     * @param data Data for storing
      */
     void save(final Collection<T> data);
 
-    /**
-     * Save or update entity data
-     *
-     * @param entity
-     *         Data entity to save
-     */
-    public void saveOrUpdate(T entity);
-
-    /**
-     * Count all entities.
-     *
-     * @return the number of entities
-     */
-    int countAll();
 
     /**
      * Count entities based on an example.
      *
-     * @param exampleInstance
-     *         the search criteria
+     * @param exampleInstance the search criteria
      * @return the number of entities
      */
     int countByExample(final T exampleInstance);
 
-    /**
-     * delete an entity from the database.
-     *
-     * @param entity
-     *         the entity to delete
-     */
-    void delete(final T entity);
 
-    /** Delete all entities of class */
+    /**
+     * Delete all entities of class
+     */
     public void deleteAll();
 
     /**
      * Merge entity
      *
-     * @param entity
-     *         Entity data to save
+     * @param entity Entity data to save
      * @return Merged entity
      */
     public T merge(T entity);
